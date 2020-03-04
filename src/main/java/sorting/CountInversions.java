@@ -2,6 +2,7 @@ package sorting;
 
 import hashtables.FreqQuery;
 import org.junit.jupiter.api.Test;
+import util.MyUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -12,29 +13,68 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CountInversions {
 
     // Complete the countInversions function below.
-    static long countInversions(int[] arr) {
-        System.out.println(Arrays.stream(arr).boxed().collect(Collectors.toList()));
-        long swaps = sort(arr, 0, arr.length-1, 0);
-        System.out.println(Arrays.stream(arr).boxed().collect(Collectors.toList()));
-        System.out.println(swaps);
+    public static long countInversions(int[] a){
+        int n = a.length;
+
+        // Base Case
+        if(n <= 1) {
+            return 0;
+        }
+
+        // Recursive Case
+        int mid = n >> 1;
+        int[] left = Arrays.copyOfRange(a, 0, mid);
+        int[] right = Arrays.copyOfRange(a, mid, a.length);
+        long inversions = countInversions(left) + countInversions(right);
+
+        int range = n - mid;
+        int iLeft = 0;
+        int iRight = 0;
+        for(int i = 0; i < n; i++) {
+            if(
+                    iLeft < mid
+                            && (
+                            iRight >= range || left[iLeft] <= right[iRight]
+                    )
+            ) {
+                a[i] = left[iLeft++];
+                inversions += iRight;
+            }
+            else if(iRight < range) {
+                a[i] = right[iRight++];
+            }
+        }
+
+        return inversions;
+    }
+    static long countInversionsd(int[] arr) {
+        MyUtils.printArray("inicial",arr);
+        long swaps = sort(arr, 0, arr.length-1);
+
         return swaps;
     }
 
-    private static long sort(int[] arr, int i, int j, long swaps) {
-        if (j-i <= 1) {
-            if (arr[i] > arr[j]) {
-                swap(arr, i, j);
-                return swaps+1;
-            } else {
-                return swaps;
+    private static void swap(int[] arr, int i, int j) {
+        int vi = arr[i];
+        arr[i] = arr[j];
+        arr[j] = vi;
+    }
+
+    private static long sort(int[] arr, int begin, int end) {
+        long swaps = 0;
+        if (end-begin == 1) {
+            if (arr[begin] > arr[end]) {
+                swap(arr, begin, end);
+                swaps++;
             }
-        } else {
-            int middle = i+(j-i)/2;
-            long swaps1 = sort(arr, i , middle, swaps);
-            long swaps2 = sort(arr, middle+1 , j, swaps);
-            long swapsMerge = merge(arr, i, middle, j);
+        } else if (end-begin > 1 ) {
+            int middle = begin+((end-begin)/2);
+            long swaps1 = sort(arr, begin , middle);
+            long swaps2 = sort(arr, middle+1 , end);
+            long swapsMerge = merge(arr, begin, middle, end);
             return swaps1+swaps2+swapsMerge;
         }
+        return swaps;
     }
 
     private static long merge(int[] arr, int i, int middle, int j) {
@@ -43,17 +83,19 @@ public class CountInversions {
         int i2 = middle+1;
 
         int mi = 0;
-        boolean left = true;
+//        boolean left = true;
         long swaps = 0;
         while (i1 <= middle && i2 <= j) {
             if (arr[i1] <= arr[i2]) {
                 cache[mi++] = arr[i1++];
-                if (!left) swaps++;
-                left = true;
+
+//                if (!left) swaps++;
+//                left = true;
             } else {
                 cache[mi++] = arr[i2++];
-                if (left) swaps++;
-                left = false;
+                swaps++;
+//                if (left) swaps++;
+//                left = false;
             }
         }
 
@@ -68,17 +110,20 @@ public class CountInversions {
         return swaps;
     }
 
-    private static void swap(int[] arr, int i, int j) {
-        int vi = arr[i];
-        arr[i] = arr[j];
-        arr[j] = vi;
-    }
+
 
 
     @Test
     public void test00() throws IOException {
         final LinkedList<Long> result = testExample("00");
         final List<Long> expected = getOutput("00");
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void test01() throws IOException {
+        final LinkedList<Long> result = testExample("01");
+        final List<Long> expected = getOutput("01");
         assertEquals(expected, result);
     }
 
