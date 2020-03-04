@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CountInversions {
-
+//https://allhackerranksolutions.blogspot.com/2019/02/merge-sort-counting-inversions-hacker.html
     // Complete the countInversions function below.
     public static long countInversions(int[] a){
         int n = a.length;
