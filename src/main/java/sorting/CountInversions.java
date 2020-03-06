@@ -13,20 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CountInversions {
 //https://allhackerranksolutions.blogspot.com/2019/02/merge-sort-counting-inversions-hacker.html
     // Complete the countInversions function below.
-    public static long countInversions(int[] a){
+    public static long countInversionsC(int[] a){
         int n = a.length;
 
         // Base Case
         if(n <= 1) {
             return 0;
         }
+        MyUtils.printArray("a", a);
 
         // Recursive Case
         int mid = n >> 1;
         int[] left = Arrays.copyOfRange(a, 0, mid);
         int[] right = Arrays.copyOfRange(a, mid, a.length);
-        long inversions = countInversions(left) + countInversions(right);
-
+        MyUtils.printArray("left", left);
+        MyUtils.printArray("right", right);
+        System.out.printf("##########################\n");
+        long inversions = countInversionsC(left) + countInversionsC(right);
         int range = n - mid;
         int iLeft = 0;
         int iRight = 0;
@@ -44,66 +47,61 @@ public class CountInversions {
                 a[i] = right[iRight++];
             }
         }
-
+        System.out.printf("inversions: %s\n", inversions);
         return inversions;
     }
-    static long countInversionsd(int[] arr) {
-        MyUtils.printArray("inicial",arr);
-        long swaps = sort(arr, 0, arr.length-1);
+    static long countInversions(int[] arr) {
+//        MyUtils.printArray("inicial",arr);
+        long swaps = sort(arr, 0, arr.length);
 
         return swaps;
     }
 
-    private static void swap(int[] arr, int i, int j) {
-        int vi = arr[i];
-        arr[i] = arr[j];
-        arr[j] = vi;
-    }
-
     private static long sort(int[] arr, int begin, int end) {
         long swaps = 0;
-        if (end-begin == 1) {
-            if (arr[begin] > arr[end]) {
-                swap(arr, begin, end);
-                swaps++;
-            }
+        if (end-begin == 0) {
+            return 0;
         } else if (end-begin > 1 ) {
             int middle = begin+((end-begin)/2);
+//            System.out.println("####################");
+//            MyUtils.printArray("arr", arr, begin, end);
+//            MyUtils.printArray("left", arr, begin, middle);
+//            MyUtils.printArray("right", arr, middle, end);
             long swaps1 = sort(arr, begin , middle);
-            long swaps2 = sort(arr, middle+1 , end);
+            long swaps2 = sort(arr, middle , end);
+//            MyUtils.printArray("s-left", arr, begin, middle);
+//            MyUtils.printArray("s-right", arr, middle, end);
             long swapsMerge = merge(arr, begin, middle, end);
+//            MyUtils.printArray("s-arr", arr, begin, end);
+//            System.out.printf("swaps: %s+%s+%s\n", swaps1, swaps2, swapsMerge);
             return swaps1+swaps2+swapsMerge;
         }
         return swaps;
     }
 
     private static long merge(int[] arr, int i, int middle, int j) {
+
         int[] cache = new int[j-i+1];
-        int i1 = i;
-        int i2 = middle+1;
+        int iLeft = i;
+        int iRight = middle;
 
         int mi = 0;
-//        boolean left = true;
         long swaps = 0;
-        while (i1 <= middle && i2 <= j) {
-            if (arr[i1] <= arr[i2]) {
-                cache[mi++] = arr[i1++];
-
-//                if (!left) swaps++;
-//                left = true;
+        while (iLeft < middle && iRight < j) {
+            if (arr[iLeft] <= arr[iRight]) {
+                cache[mi++] = arr[iLeft++];
             } else {
-                cache[mi++] = arr[i2++];
-                swaps++;
-//                if (left) swaps++;
-//                left = false;
+                cache[mi++] = arr[iRight++];
+//                System.out.printf("Shift: %s\n",iRight-middle);
+                swaps+=middle-iLeft;
             }
         }
 
-        while (i1 <= middle) {
-            cache[mi++] = arr[i1++];
+        while (iLeft < middle) {
+            cache[mi++] = arr[iLeft++];
         }
-        while (i2 <= j) {
-            cache[mi++] = arr[i2++];
+        while (iRight < j) {
+            cache[mi++] = arr[iRight++];
         }
 
         for (int x = i, a = 0 ; x < j ; x++) arr[x] = cache[a++];
