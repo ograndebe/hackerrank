@@ -24,6 +24,7 @@ public class CommonChild {
             }
         }
         System.out.printf("li>%s, lj>%s\n",lowerI, lowerJ);
+        System.out.println("Antes");
         MyUtils.printMatrix(matrix);
         if (totalCommon == 0 ) return 0;
 
@@ -31,25 +32,31 @@ public class CommonChild {
         int jStart = lowerJ;
         for(int i = lowerI; i < s1.length() ; i++) {
             for (int j = jStart; j < s2.length(); j++) {
-                if (matrix[i][j] == 1) {
+                if (matrix[i][j] > 0) {
+                    matrix[i][j]++;
                     jStart = j+1;
                     sizePath1++;
                     break;
                 }
             }
         }
+        System.out.println("passo 1");
+        MyUtils.printMatrix(matrix);
 
         int sizePath2 = 0;
         int iStart = lowerI;
         for(int j = lowerJ; j < s2.length() ; j++) {
             for (int i = iStart; i < s1.length(); i++) {
-                if (matrix[i][j] == 1) {
+                if (matrix[i][j] > 0) {
+                    matrix[i][j]++;
                     iStart = i+1;
                     sizePath2++;
                     break;
                 }
             }
         }
+        System.out.println("passo 2");
+        MyUtils.printMatrix(matrix);
 
         return Math.max(sizePath1, sizePath2);
     }
