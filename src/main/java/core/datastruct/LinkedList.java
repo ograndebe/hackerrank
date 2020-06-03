@@ -56,9 +56,20 @@ public class LinkedList <T> {
         return sb.toString();
     }
 
-    public boolean remove(int index) {
-        //TODO
-        return false;
+    public T remove(int index) {
+        int i = index;
+        Node<T> n = this.first;
+        while (i > 0) {
+            i--;
+            if (n == null) throw new IndexOutOfBoundsException();
+            n = n.next;
+        }
+
+        Node<T> next = n.next;
+        Node<T> prev = n.prev;
+        prev.next = next;
+        next.prev = prev;
+        return n.value;
     }
 
     public Iterator<T> iterator() {

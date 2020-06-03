@@ -1,0 +1,5 @@
+Bit Manipulation
+Memory (Stack vs. Heap)
+Recursion
+Dynamic Programming
+Big 0 Time & Space

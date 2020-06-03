@@ -1,0 +1,5 @@
+Trees, Tries, & Graphs
+Stacks & Queues
+Heaps
+Vectors I ArrayLists
+Hash Tables
