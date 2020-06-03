@@ -7,87 +7,71 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommonChild {
 
+    static int commonChildResursive(String s1, String s2) {
+        if (s1.length() == 0 || s2.length() == 0) {
+            return 0;
+        } else {
+            final char last1 = s1.charAt(s1.length() - 1);
+            final char last2 = s2.charAt(s2.length() - 1);
+            if (last1 == last2) {
+                return 1 + commonChild(s1.substring(0,s1.length()-1),s2.substring(0,s2.length()-1));
+            } else {
+                return Math.max(
+                        commonChild(s1.substring(0,s1.length()-1),s2),
+                        commonChild(s1,s2.substring(0,s2.length()-1))
+                        );
+            }
+        }
+
+    }
+
     static int commonChild(String s1, String s2) {
-        int[][] matrix = new int[8][8];
+        int[][] buffer = new int[s1.length()+1][s2.length()+1];
 
-        int lowerI = 5000;
-        int lowerJ = 5000;
-        int totalCommon = 0;
-        for(int i = 0; i < s1.length() ; i++) {
-            for(int j = 0; j < s2.length() ; j++) {
-                if (s1.charAt(i) == s2.charAt(j)) {
-                    matrix[i][j] = 1;
-                    totalCommon++;
-                    if (i < lowerI) lowerI = i;
-                    if (j < lowerJ) lowerJ = j;
+        for (int i = 0; i <= s1.length() ; i++) {
+            for (int j = 0; j <= s2.length() ; j++) {
+                if (i == 0 || j == 0) buffer[i][j] = 0;
+                else if (s1.charAt(i-1) == s2.charAt(j-1)) {
+                    buffer[i][j] = buffer[i-1][j-1]+1;
+                } else {
+                    buffer[i][j] = Math.max(buffer[i-1][j], buffer[i][j-1]);
                 }
             }
         }
-        System.out.printf("li>%s, lj>%s\n",lowerI, lowerJ);
-        System.out.println("Antes");
-        MyUtils.printMatrix(matrix);
-        if (totalCommon == 0 ) return 0;
 
-        int sizePath1 = 0;
-        int jStart = lowerJ;
-        for(int i = lowerI; i < s1.length() ; i++) {
-            for (int j = jStart; j < s2.length(); j++) {
-                if (matrix[i][j] > 0) {
-                    matrix[i][j]++;
-                    jStart = j+1;
-                    sizePath1++;
-                    break;
-                }
-            }
-        }
-        System.out.println("passo 1");
-        MyUtils.printMatrix(matrix);
-
-        int sizePath2 = 0;
-        int iStart = lowerI;
-        for(int j = lowerJ; j < s2.length() ; j++) {
-            for (int i = iStart; i < s1.length(); i++) {
-                if (matrix[i][j] > 0) {
-                    matrix[i][j]++;
-                    iStart = i+1;
-                    sizePath2++;
-                    break;
-                }
-            }
-        }
-        System.out.println("passo 2");
-        MyUtils.printMatrix(matrix);
-
-        return Math.max(sizePath1, sizePath2);
+        return buffer[s1.length()][s2.length()];
     }
 
 
     @Test
     public void enunciado() {
-        int actual = commonChild("ABCD","ABDC"); //ABC  OR ABD
+        int actual = commonChild("ABCD", "ABDC"); //ABC  OR ABD
         /*
-        * ABCD
-        *
-        * ABDC
-        *
-        * */
+         * ABCD
+         *
+         * ABDC
+         *
+         * */
 
-        assertEquals(3,actual);
+        assertEquals(3, actual);
     }
+
     @Test
     public void example00() {
-        int actual = commonChild("HARRY","SALLY"); // AY
-        assertEquals(2,actual);
+        int actual = commonChild("HARRY", "SALLY"); // AY
+        assertEquals(2, actual);
     }
+
     @Test
     public void example01() {
-        int actual = commonChild("AA","BB");
-        assertEquals(0,actual);
+        int actual = commonChild("AA", "BB");
+        assertEquals(0, actual);
     }
+
     @Test
     public void example02() {
-        int actual = commonChild("SHINCHAN","NOHARAAA"); //NHA
-        assertEquals(3,actual);
+        int actual = commonChild("SHINCHAN", "NOHARAAA"); //NHA
+        assertEquals(3, actual);
 
         /*
         SHINCHAN -> HNHAN
@@ -98,16 +82,17 @@ public class CommonChild {
         NHA
         * */
     }
+
     @Test
     public void example03() {
-        int actual = commonChild("ABCDEF","FBDAMN"); //BD
+        int actual = commonChild("ABCDEF", "FBDAMN"); //BD
 
         /*
-        * ABCDEF -> ABDF
-        * .. . .
-        * FBDAMN -> FBDA
-        * ....
-        * */
-        assertEquals(2,actual);
+         * ABCDEF -> ABDF
+         * .. . .
+         * FBDAMN -> FBDA
+         * ....
+         * */
+        assertEquals(2, actual);
     }
 }
